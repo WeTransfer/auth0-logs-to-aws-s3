@@ -45,11 +45,11 @@ module.exports = (configProvider, storageProvider) => {
 
   app.use(expressTools.routes.dashboardAdmins({
     secret: config('EXTENSION_SECRET'),
-    audience: 'urn:logs-to-azure-blob-storage',
+    audience: 'urn:logs-to-aws-s3',
     rta: config('AUTH0_RTA').replace('https://', ''),
     domain: config('AUTH0_DOMAIN'),
     baseUrl: config('PUBLIC_WT_URL') || config('WT_URL'),
-    clientName: 'Logs to Azure Blob Storage',
+    clientName: 'Logs to AWS S3',
     urlPrefix: '',
     sessionStorageKey: 'logs-to-azure-blob-storage:apiToken'
   }));

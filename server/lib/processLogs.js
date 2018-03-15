@@ -1,5 +1,5 @@
 const async = require('async');
-const azure = require('azure-storage');
+const AWS = require('aws-sdk');
 const moment = require('moment');
 const useragent = require('useragent');
 
@@ -17,7 +17,12 @@ module.exports = (storage) =>
       return next();
     }
 
-    const blobService = azure.createBlobService(config('STORAGE_ACCOUNT_NAME'), config('STORAGE_ACCOUNT_KEY'));
+    AWS.config.update({
+      accessKeyId: config('AWS_ACCESS_KEY_ID'),
+      secretAccessKey: config('AWS_SECRET_ACCESS_KEY'),
+      region: config('AWS_REGION'),
+    });
+    const s3 = new AWS.S3({apiVersion: '2006-03-01'});
 
     const remapLogs = (record) => {
       record.type_code = record.type;
@@ -39,13 +44,20 @@ module.exports = (storage) =>
         return callback();
       }
 
-      logger.info(`Sending ${logs.length} logs to Azure Blob Storage.`);
+      logger.info(`Sending ${logs.length} logs to AWS S3.`);
 
       async.eachLimit(logs.map(remapLogs), 5, (log, cb) => {
         const date = moment(log.date);
         const url = `${date.format('YYYY/MM/DD')}/${date.format('HH')}/${log._id}.json`;
 
-        blobService.createBlockBlobFromText(config('STORAGE_CONTAINER_NAME'), url, JSON.stringify(log), cb);
+        const params = {
+          Bucket: config('AWS_BUCKET_NAME'),
+          Key: url,
+          Body: JSON.stringify(log),
+          ContentType: 'application/json',
+          ServerSideEncryption: 'AES256',
+        };
+        s3.putObject(params, (err) => cb(err));
       }, (err) => {
         if (err) {
           return callback(err);
@@ -58,8 +70,8 @@ module.exports = (storage) =>
 
     const slack = new loggingTools.reporters.SlackReporter({
       hook: config('SLACK_INCOMING_WEBHOOK_URL'),
-      username: 'auth0-logs-to-azure-blob-storage',
-      title: 'Logs To Azure Blob Storage' });
+      username: 'auth0-logs-to-aws-s3',
+      title: 'Logs To AWS S3' });
 
     const options = {
       domain: config('AUTH0_DOMAIN'),

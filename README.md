@@ -1,22 +1,36 @@
-# Auth0 - Logs to Azure Blob Storage
+# Auth0 - Logs to AWS S3
 
 [![Auth0 Extensions](http://cdn.auth0.com/extensions/assets/badge.svg)](https://sandbox.it.auth0.com/api/run/auth0-extensions/extensions-badge?webtask_no_cache=1)
 
-This extension will take all of your Auth0 logs and export them to Azure Blob Storage.
+This extension will take all of your Auth0 logs and export them to AWS S3
 
-## Configure Azure Blob Storage
+Thanks Westy92 for the AWS part (https://github.com/westy92/auth0-logs-to-s3)
 
-First you'll need to [create an Azure Storage account](https://portal.azure.com/#create/Microsoft.StorageAccount.1.0.0).
+## Configure Amazon Web Services
 
-## Usage
+First you'll need to [create an Amazon Web Services account](https://aws.amazon.com/).
 
-Use any Storage Explorer to access your logs. Each record will be saved in the following structure:
+You will need to setup an IAM user with the following policy (replace your-bucket-name with an actual bucket name):
 
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "AllowedActions",
+            "Effect": "Allow",
+            "Action": [
+                "s3:PutObject"
+            ],
+            "Resource": [
+                "arn:aws:s3:::your-bucket-name/*"
+            ]
+        }
+    ]
+}
 ```
-https://{YOUR_STORAGE_ACCOUNT_NAME}.blob.core.windows.net/{YOUR_STORAGE_CONTAINER_NAME}/YYYY/MM/DD/HH/{LOG_ID}.json
-```
 
-This will allow you to process the logs with Stream Analytics for example (which in turn can export them to Power BI).
+> You will also need to create an S3 Bucket to put the logs into if you have not already done so.
 
 ## Issue Reporting
 

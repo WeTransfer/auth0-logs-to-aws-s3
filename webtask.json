@@ -1,9 +1,9 @@
 {
-  "title": "Auth0 Logs to Azure Blob Storage",
-  "name": "auth0-logs-to-azure-blob-storage",
+  "title": "Auth0 Logs to AWS S3",
+  "name": "auth0-logs-to-aws-s3",
   "version": "2.0.2",
   "author": "auth0",
-  "description": "This extension will take all of your Auth0 logs and export them to Azure Blob Storage",
+  "description": "This extension will take all of your Auth0 logs and export them to AWS S3",
   "type": "cron",
   "initialUrlPath": "/login",
   "keywords": [
@@ -18,19 +18,24 @@
   },
   "secrets": {
     "BATCH_SIZE": {
-      "description": "The amount of logs to batch before sending to Logstash. A single cron execution will send multiple batches.",
+      "description": "The amount of logs to batch before sending to S3. A single cron execution will send multiple batches.",
       "default": 100
     },
-    "STORAGE_ACCOUNT_NAME": {
-      "description": "Azure Storage Account Name",
+    "AWS_ACCESS_KEY_ID": {
+      "description": "AWS access key",
       "required": true
     },
-    "STORAGE_ACCOUNT_KEY": {
-      "description": "Azure Storage Account Key",
+    "AWS_SECRET_ACCESS_KEY": {
+      "description": "Aws secret key",
       "required": true
     },
-    "STORAGE_CONTAINER_NAME": {
-      "description": "Azure Blob Storage Container Name",
+    "AWS_BUCKET_NAME": {
+      "description": "S3 bucket name",
+      "required": true
+    },
+    "AWS_REGION": {
+      "description": "S3 bucket region",
+      "default": "us-west-2",
       "required": true
     },
     "START_FROM": {
