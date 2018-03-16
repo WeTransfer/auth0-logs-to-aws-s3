@@ -51,7 +51,7 @@ module.exports = (configProvider, storageProvider) => {
     baseUrl: config('PUBLIC_WT_URL') || config('WT_URL'),
     clientName: 'Logs to AWS S3',
     urlPrefix: '',
-    sessionStorageKey: 'logs-to-azure-blob-storage:apiToken'
+    sessionStorageKey: 'logs-to-aws-s3:apiToken'
   }));
 
   app.use('/app', Express.static(path.join(__dirname, '../dist')));

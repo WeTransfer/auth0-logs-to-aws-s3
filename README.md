@@ -6,6 +6,8 @@ This extension will take all of your Auth0 logs and export them to AWS S3
 
 Thanks Westy92 for the AWS part (https://github.com/westy92/auth0-logs-to-s3)
 
+
+
 ## Configure Amazon Web Services
 
 First you'll need to [create an Amazon Web Services account](https://aws.amazon.com/).
