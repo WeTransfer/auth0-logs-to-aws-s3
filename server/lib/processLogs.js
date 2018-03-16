@@ -44,7 +44,7 @@ module.exports = (storage) =>
     const sendSeparate = (logs, callback) => {
       async.eachLimit(logs, 5, (log, cb) => {
         const date = moment(log.date);
-        const url = `${date.format('YYYY/MM/DD')}/${date.format('HH')}/${log._id}.json`;
+        const url = `${date.format('YYYY/MM/DD')}/${date.format('HH')}/auth0_${log._id}.json`;
 
         const params = {
           Bucket: config('AWS_BUCKET_NAME'),
@@ -67,7 +67,7 @@ module.exports = (storage) =>
     const sendBatch = (logs, callback) => {
       const date = moment();
       const lastId = logs[logs.length - 1]._id;
-      const url = `${date.format('YYYY/MM/DD')}/${date.format('HH')}/${lastId}.json`;
+      const url = `${date.format('YYYY/MM/DD')}/${date.format('HH')}/auth0_batch_${lastId}.json`;
 
       const params = {
         Bucket: config('AWS_BUCKET_NAME'),
