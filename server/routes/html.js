@@ -20,7 +20,7 @@ module.exports = () => {
     <link rel="stylesheet" type="text/css" href="https://cdn.auth0.com/manage/v0.3.1672/css/index.min.css" />
     <link rel="stylesheet" type="text/css" href="https://cdn.auth0.com/styleguide/4.6.13/index.min.css" />
     <% if (assets.style) { %><link rel="stylesheet" type="text/css" href="/app/<%= assets.style %>" /><% } %>
-    <% if (assets.version) { %><link rel="stylesheet" type="text/css" href="//cdn.auth0.com/extensions/auth0-logs-to-aws-s3/assets/auth0-logs-to-aws-s3.ui.<%= assets.version %>.css" /><% } %>
+    <% if (assets.version) { %><link rel="stylesheet" type="text/css" href="//cloud-cdn.safe.com/auth0-extensions/auth0-logs-to-aws-s3/assets/auth0-logs-to-aws-s3.ui.<%= assets.version %>.css" /><% } %>
     <% if (assets.customCss) { %><link rel="stylesheet" type="text/css" href="<%= assets.customCss %>" /><% } %>
   </head>
   <body>

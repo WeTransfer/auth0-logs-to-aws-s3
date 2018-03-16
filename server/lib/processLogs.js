@@ -39,14 +39,10 @@ module.exports = (storage) =>
       return record;
     };
 
-    const onLogsReceived = (logs, callback) => {
-      if (!logs || !logs.length) {
-        return callback();
-      }
 
-      logger.info(`Sending ${logs.length} logs to AWS S3.`);
 
-      async.eachLimit(logs.map(remapLogs), 5, (log, cb) => {
+    const sendSeparate = (logs, callback) => {
+      async.eachLimit(logs, 5, (log, cb) => {
         const date = moment(log.date);
         const url = `${date.format('YYYY/MM/DD')}/${date.format('HH')}/${log._id}.json`;
 
@@ -67,6 +63,35 @@ module.exports = (storage) =>
         return callback();
       });
     };
+
+    const sendBatch = (logs, callback) => {
+      const date = moment();
+      const lastId = logs[logs.length - 1]._id;
+      const url = `${date.format('YYYY/MM/DD')}/${date.format('HH')}/${lastId}.json`;
+
+      const params = {
+        Bucket: config('AWS_BUCKET_NAME'),
+        Key: url,
+        Body: JSON.stringify(logs),
+        ContentType: 'application/json',
+        ServerSideEncryption: 'AES256',
+      };
+      s3.putObject(params, (err) => callback(err));
+    }
+
+    const onLogsReceived = (logs, callback) => {
+      if (!logs || !logs.length) {
+        return callback();
+      }
+
+      if (config('SEND_AS_BATCH') === true || config('SEND_AS_BATCH') === 'true') {
+        logger.info(`[Batch mode] Sending ${logs.length} logs to AWS S3.`);
+        return sendBatch(logs.map(remapLogs), callback);
+      } else {
+        logger.info(`Sending ${logs.length} logs to AWS S3.`);
+        return sendSeparate(logs.map(remapLogs), callback);
+      }
+    }
 
     const slack = new loggingTools.reporters.SlackReporter({
       hook: config('SLACK_INCOMING_WEBHOOK_URL'),
